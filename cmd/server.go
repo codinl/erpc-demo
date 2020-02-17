@@ -23,7 +23,7 @@ func ServerStart() {
 	// server peer
 	srv := erpc.NewPeer(erpc.PeerConfig{
 		//CountTime:   true,
-		ListenPort: 9090,
+		ListenPort:  9090,
 		PrintDetail: false,
 	})
 	srv.SetTLSConfig(erpc.GenerateTLSConfigForServer())
