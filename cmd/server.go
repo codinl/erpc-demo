@@ -23,26 +23,42 @@ func ServerStart() {
 	// server peer
 	srv := erpc.NewPeer(erpc.PeerConfig{
 		//CountTime:   true,
-		ListenPort:  9090,
-		//PrintDetail: true,
+		ListenPort: 9090,
+		PrintDetail: false,
 	})
 	srv.SetTLSConfig(erpc.GenerateTLSConfigForServer())
 
 	// router
 	srv.RoutePush(new(Server))
 
+	go func() {
+		for {
+			fmt.Println("向客户端发送信息：")
+			var content string
+			fmt.Scanln(&content)
+			srv.RangeSession(func(sess erpc.Session) bool {
+				sess.Push(
+					CLIENT_TOPIC,
+					content,
+				)
+				return true
+			})
+		}
+	}()
+
 	// listen and serve
 	srv.ListenAndServe()
 }
 
-// Server push handler
+const SERVER_TOPIC = "/server/msg"
+
 type Server struct {
 	erpc.PushCtx
 }
 
-// Server handles '/server/msg' message
-func (p *Server) Msg(arg *string) *erpc.Status {
-	fmt.Printf("--------%s\n", *arg)
+// Add handles msg request
+func (m *Server) Msg(arg *string) *erpc.Status {
+	erpc.Printf("------------收到客户端的信息：%s\n", *arg)
 	return nil
 }
 
