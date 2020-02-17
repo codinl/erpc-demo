@@ -1,5 +1,5 @@
 # erpc-demo
-erpc-demo
+erpc学习代码，试验客户端向客户端发送消息。
 
 # 启动方法
 
